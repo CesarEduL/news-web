@@ -2,46 +2,15 @@
     <div class="home">
         <section class="hero">
             <h1>Últimas Noticias</h1>
-            <div class="search-bar">
-                <Search class="search-icon" />
-                <input type="text" v-model="searchQuery" placeholder="Buscar noticias..." @input="filterPosts">
-            </div>
+            <SearchBar v-model="searchQuery" />
         </section>
 
-        <div class="categories-filter">
-            <button v-for="category in categories" :key="category"
-                :class="['category-btn', { active: selectedCategory === category }]"
-                @click="filterByCategory(category)">
-                {{ category }}
-            </button>
-        </div>
+        <CategoryFilter :categories="categories" v-model="selectedCategory" />
 
         <div class="posts-grid" v-if="filteredPosts.length">
-            <article v-for="post in filteredPosts" :key="post.id" class="post-card">
-                <div class="post-image">
-                    <img :src="`https://picsum.photos/seed/${post.id}/400/300`" :alt="post.title">
-                    <span class="category-tag">{{ post.category }}</span>
-                </div>
-                <div class="post-content">
-                    <h2>{{ post.title }}</h2>
-                    <p class="post-excerpt">{{ excerpt(post.body) }}</p>
-                    <div class="post-meta">
-                        <span class="post-date">
-                            <Calendar class="icon" />
-                            {{ formatDate(post.date) }}
-                        </span>
-                        <span class="post-author">
-                            <User class="icon" />
-                            {{ post.author }}
-                        </span>
-                    </div>
-                    <router-link :to="'/post/' + post.id" class="read-more">
-                        Leer más
-                        <ChevronRight class="icon" />
-                    </router-link>
-                </div>
-            </article>
+            <NewsCard v-for="post in filteredPosts" :key="post.id" :post="post" />
         </div>
+
         <div v-else class="no-results">
             <FileSearch class="no-results-icon" />
             <p>No se encontraron resultados</p>
@@ -52,12 +21,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import { Search, Calendar, User, ChevronRight, FileSearch } from 'lucide-vue-next'
+import { FileSearch } from 'lucide-vue-next'
+import SearchBar from '@/components/SearchBar.vue'
+import CategoryFilter from '@/components/CategoryFilter.vue'
+import NewsCard from '@/components/NewsCard.vue'
 
 const store = useStore()
 const searchQuery = ref('')
 const selectedCategory = ref('Todos')
-
 const categories = ['Todos', 'Política', 'Tecnología', 'Deportes', 'Cultura']
 
 // Cargar posts al montar el componente
@@ -87,22 +58,6 @@ const filteredPosts = computed(() => {
 
     return filtered
 })
-
-const filterByCategory = (category) => {
-    selectedCategory.value = category
-}
-
-const excerpt = (text) => {
-    return text.slice(0, 100) + '...'
-}
-
-const formatDate = (date) => {
-    return new Intl.DateTimeFormat('es-ES', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }).format(date)
-}
 </script>
 
 <style scoped>
