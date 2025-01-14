@@ -117,13 +117,11 @@ const sharePost = async () => {
 
 <style scoped>
 .post {
-    max-width: 800px;
     margin: 0 auto;
     padding: 20px;
 }
 
 .post-header {
-    position: relative;
     margin-bottom: 2rem;
 }
 
@@ -135,14 +133,17 @@ const sharePost = async () => {
 }
 
 .post-meta {
-    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
 }
 
 .category {
     display: inline-block;
     background-color: var(--primary-color);
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.5rem;
     border-radius: 2rem;
     font-size: 0.875rem;
     margin-bottom: 1rem;
@@ -152,6 +153,7 @@ const sharePost = async () => {
     font-size: 2.5rem;
     margin: 0.5rem 0 1rem;
     line-height: 1.2;
+    text-align: center;
 }
 
 .author-info {
