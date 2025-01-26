@@ -173,6 +173,7 @@ const formatNumber = (num) => {
 
 .trending-card {
     display: grid;
+    align-items: center;
     grid-template-columns: auto 150px 1fr;
     gap: 1.5rem;
     padding: 1.5rem;
