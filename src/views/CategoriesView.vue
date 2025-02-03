@@ -11,49 +11,11 @@
                 <span class="post-count">{{ getPostCount(category.name) }} artículos</span>
             </div>
         </div>
-
-        <div v-if="selectedCategory" class="category-posts">
-            <div class="category-header">
-                <h2>{{ selectedCategory }}</h2>
-                <button class="filter-btn" @click="showFilters = !showFilters">
-                    <SlidersHorizontal class="icon" />
-                    Filtros
-                </button>
-            </div>
-
-            <div v-if="showFilters" class="filters">
-                <select v-model="sortBy" class="filter-select">
-                    <option value="date">Más recientes</option>
-                    <option value="popular">Más populares</option>
-                    <option value="title">Alfabético</option>
-                </select>
-
-                <div class="date-filter">
-                    <input type="date" v-model="dateFrom" class="date-input">
-                    <span>hasta</span>
-                    <input type="date" v-model="dateTo" class="date-input">
-                </div>
-            </div>
-
-            <div class="posts-grid">
-                <article v-for="post in filteredPosts" :key="post.id" class="post-card">
-                    <img :src="`https://picsum.photos/seed/${post.id}/400/300`" :alt="post.title">
-                    <div class="post-content">
-                        <h3>{{ post.title }}</h3>
-                        <p>{{ excerpt(post.body) }}</p>
-                        <router-link :to="'/post/' + post.id" class="read-more">
-                            Leer más
-                            <ChevronRight class="icon" />
-                        </router-link>
-                    </div>
-                </article>
-            </div>
-        </div>
     </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import {
@@ -98,12 +60,6 @@ const categories = [
     }
 ]
 
-const selectedCategory = ref('')
-const showFilters = ref(false)
-const sortBy = ref('date')
-const dateFrom = ref('')
-const dateTo = ref('')
-
 // Simulamos posts con categorías
 const posts = computed(() =>
     store.state.posts.map(post => ({
@@ -118,35 +74,8 @@ const getPostCount = (category) => {
     return posts.value.filter(post => post.category === category).length
 }
 
-const filteredPosts = computed(() => {
-    let filtered = posts.value.filter(post => post.category === selectedCategory.value)
-
-    if (dateFrom.value && dateTo.value) {
-        filtered = filtered.filter(post => {
-            const postDate = new Date(post.date)
-            return postDate >= new Date(dateFrom.value) &&
-                postDate <= new Date(dateTo.value)
-        })
-    }
-
-    switch (sortBy.value) {
-        case 'date':
-            return filtered.sort((a, b) => b.date - a.date)
-        case 'popular':
-            return filtered.sort((a, b) => b.views - a.views)
-        case 'title':
-            return filtered.sort((a, b) => a.title.localeCompare(b.title))
-        default:
-            return filtered
-    }
-})
-
 const goToCategory = (category) => {
-    selectedCategory.value = category
-}
-
-const excerpt = (text) => {
-    return text.slice(0, 100) + '...'
+    router.push(`/categories/${category}`)
 }
 </script>
 
